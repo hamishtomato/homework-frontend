@@ -19,6 +19,7 @@ Modern file management web application built with React, TypeScript, and Feature
 - **Styling**: Tailwind CSS
 - **Routing**: React Router v6
 - **HTTP Client**: Axios
+- **Testing**: Vitest + React Testing Library + MSW
 - **Architecture**: Feature-Sliced Design (FSD)
 
 ## Prerequisites
@@ -134,9 +135,45 @@ npm run dev          # Start dev server (http://localhost:5173)
 npm run build        # Build for production
 npm run preview      # Preview production build
 
+# Testing
+npm test             # Run tests in watch mode
+npm run test:run     # Run tests once (CI mode)
+
 # Linting
 npm run lint         # Run ESLint
 ```
+
+## Testing
+
+This project includes unit tests using **Vitest**, **React Testing Library**, and **MSW** for API mocking.
+
+### Running Tests
+
+```bash
+# Run tests in watch mode
+npm test
+
+# Run tests once (CI mode)
+npm run test:run
+```
+
+### Test Coverage
+
+```
+✓ 24 tests passing
+✓ 4 test files
+```
+
+**Coverage includes:**
+- Utility functions (formatters, storage)
+- API layer (login, signup, user info)
+- UI components (LoginForm)
+
+### CI/CD
+
+Tests run automatically on every push and pull request via GitHub Actions (`.github/workflows/ci.yml`).
+
+For detailed testing documentation, see `TESTING_SUMMARY.md` in the project root.
 
 ## API Integration
 
