@@ -3,7 +3,7 @@ import { FileCard } from './FileCard';
 import { Pagination } from '@/shared/ui/Pagination';
 
 export function FileListWidget() {
-  const { files, loading, error, page, totalPages, order, setPage, toggleOrder, refetch } =
+  const { files, loading, error, page, totalPages, totalItems, limit, order, setPage, setLimit, toggleOrder, refetch } =
     useFileList();
 
   if (loading) {
@@ -40,10 +40,10 @@ export function FileListWidget() {
     <div className="space-y-6">
       {/* Sort controls */}
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">Your Files ({files.length})</h2>
+        <h2 className="text-lg font-semibold">Your Files ({totalItems})</h2>
         <button
           onClick={toggleOrder}
-          className="text-sm px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50"
+          className="text-sm px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
         >
           Sort: {order === 'desc' ? 'Newest First' : 'Oldest First'}
         </button>
@@ -57,11 +57,14 @@ export function FileListWidget() {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="pt-4">
-          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
-        </div>
-      )}
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        itemsPerPage={limit}
+        onPageChange={setPage}
+        onItemsPerPageChange={setLimit}
+      />
     </div>
   );
 }

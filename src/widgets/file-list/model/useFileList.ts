@@ -10,8 +10,9 @@ export function useFileList() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
-  const limit = 10;
+  const [limit, setLimit] = useState(10);
 
   const fetchFiles = useCallback(async () => {
     setLoading(true);
@@ -20,6 +21,7 @@ export function useFileList() {
     try {
       const response = await fileApi.list(page, limit, order);
       setFiles(response.files);
+      setTotalItems(response.total);
       setTotalPages(Math.ceil(response.total / limit));
     } catch (err) {
       const error = err as { response?: { data?: { detail?: string } } };
@@ -27,7 +29,7 @@ export function useFileList() {
     } finally {
       setLoading(false);
     }
-  }, [page, order]);
+  }, [page, limit, order]);
 
   useEffect(() => {
     fetchFiles();
@@ -39,6 +41,12 @@ export function useFileList() {
 
   const toggleOrder = () => {
     setOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    setPage(1); // Reset to first page when changing sort order
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1); // Reset to first page when changing items per page
   };
 
   return {
@@ -47,8 +55,11 @@ export function useFileList() {
     error,
     page,
     totalPages,
+    totalItems,
+    limit,
     order,
     setPage,
+    setLimit: handleLimitChange,
     toggleOrder,
     refetch,
   };
