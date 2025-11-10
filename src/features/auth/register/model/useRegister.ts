@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userApi } from '@/entities/user';
 import { storage } from '@/shared/lib/storage';
+import type { AxiosError } from 'axios';
 
 /**
  * Register feature hook
@@ -20,8 +21,14 @@ export function useRegister() {
       storage.setToken(access_token);
       navigate('/dashboard');
     } catch (err) {
-      const error = err as { response?: { data?: { detail?: string } } };
-      setError(error.response?.data?.detail || 'Registration failed');
+      const error = err as AxiosError<{ detail?: string }>;
+      
+      // Check for 422 status code (validation error, usually email format)
+      if (error.response?.status === 422) {
+        setError('Invalid email format. Please enter a valid email address.');
+      } else {
+        setError(error.response?.data?.detail || 'Registration failed');
+      }
       throw err;
     } finally {
       setLoading(false);

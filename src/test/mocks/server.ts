@@ -25,6 +25,15 @@ const handlers = [
   http.post(`${API_URL}/auth/signup`, async ({ request }) => {
     const body = await request.json() as { email: string; password: string }
     
+    // Check for invalid email format (server-side validation)
+    // This simulates backend rejecting emails that pass HTML5 validation but fail server validation
+    if (body.email === 'invalid@email' || body.email === 'test@invalid') {
+      return HttpResponse.json(
+        { detail: 'value is not a valid email address' },
+        { status: 422 }
+      )
+    }
+    
     if (body.email === 'existing@example.com') {
       return HttpResponse.json(
         { detail: 'Email already registered' },
