@@ -14,6 +14,16 @@ vi.mock('@/entities/file', () => ({
 describe('FileUploadButton', () => {
   const mockOnUploadSuccess = vi.fn()
 
+  const mockFileMetadata = {
+    id: 1,
+    user_id: 'user-1',
+    filename: 'test.jpg',
+    url: 'https://example.com/test.jpg',
+    size: 1024,
+    content_type: 'image/jpeg',
+    created_at: '2024-01-01T00:00:00Z',
+  }
+
   beforeEach(() => {
     vi.clearAllMocks()
   })
@@ -33,7 +43,7 @@ describe('FileUploadButton', () => {
 
     vi.mocked(fileApi.upload).mockImplementation(async (_file, onProgress) => {
       progressCallback = onProgress
-      return { id: 1 }
+      return mockFileMetadata
     })
 
     render(<FileUploadButton onUploadSuccess={mockOnUploadSuccess} />)
@@ -61,7 +71,7 @@ describe('FileUploadButton', () => {
 
     vi.mocked(fileApi.upload).mockImplementation(async (_file, onProgress) => {
       onProgress?.(100)
-      return { id: 1 }
+      return mockFileMetadata
     })
 
     render(<FileUploadButton onUploadSuccess={mockOnUploadSuccess} />)
@@ -100,7 +110,7 @@ describe('FileUploadButton', () => {
 
     vi.mocked(fileApi.upload).mockImplementation(async (_file, onProgress) => {
       onProgress?.(100)
-      return { id: 1 }
+      return mockFileMetadata
     })
 
     render(<FileUploadButton onUploadSuccess={mockOnUploadSuccess} />)
@@ -124,7 +134,7 @@ describe('FileUploadButton', () => {
 
     vi.mocked(fileApi.upload).mockImplementation(async (_file, onProgress) => {
       onProgress?.(100)
-      return { id: 1 }
+      return mockFileMetadata
     })
 
     render(<FileUploadButton onUploadSuccess={mockOnUploadSuccess} />)
@@ -151,7 +161,7 @@ describe('FileUploadButton', () => {
 
     vi.mocked(fileApi.upload).mockImplementation(async (_file, onProgress) => {
       onProgress?.(100)
-      return { id: 1 }
+      return mockFileMetadata
     })
 
     render(<FileUploadButton onUploadSuccess={mockOnUploadSuccess} />)

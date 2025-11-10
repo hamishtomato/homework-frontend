@@ -34,10 +34,11 @@ export const fileApi = {
   async list(
     page: number = 1,
     limit: number = 10,
-    order: 'asc' | 'desc' = 'desc'
+    order: 'asc' | 'desc' = 'desc',
+    orderBy: string = 'created_at'
   ): Promise<FileListResponse> {
     const { data } = await apiClient.get<FileListResponse>('/files', {
-      params: { page, limit, order },
+      params: { page, limit, order, order_by: orderBy },
     });
     return data;
   },

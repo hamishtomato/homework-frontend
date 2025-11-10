@@ -1,9 +1,9 @@
-import { useFileList } from '../model/useFileList';
+import { useFileList, type SortOption } from '../model/useFileList';
 import { FileCard } from './FileCard';
 import { Pagination } from '@/shared/ui/Pagination';
 
 export function FileListWidget() {
-  const { files, loading, error, page, totalPages, totalItems, limit, order, setPage, setLimit, toggleOrder, refetch } =
+  const { files, loading, error, page, totalPages, totalItems, limit, sortBy, setPage, setLimit, setSortBy, refetch } =
     useFileList();
 
   if (loading) {
@@ -36,17 +36,35 @@ export function FileListWidget() {
     );
   }
 
+  const sortOptions: { value: SortOption; label: string }[] = [
+    { value: 'newest', label: '📅 Newest First' },
+    { value: 'oldest', label: '📅 Oldest First' },
+    { value: 'largest', label: '📊 Largest First' },
+    { value: 'smallest', label: '📊 Smallest First' },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Sort controls */}
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">Your Files ({totalItems})</h2>
-        <button
-          onClick={toggleOrder}
-          className="text-sm px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-        >
-          Sort: {order === 'desc' ? 'Newest First' : 'Oldest First'}
-        </button>
+        <div className="flex items-center gap-2">
+          <label htmlFor="sort-select" className="text-sm text-gray-600">
+            Sort by:
+          </label>
+          <select
+            id="sort-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as SortOption)}
+            className="text-sm px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* File list */}

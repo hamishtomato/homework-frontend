@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fileApi, type FileMetadata } from '@/entities/file';
 
+export type SortOption = 'newest' | 'oldest' | 'largest' | 'smallest';
+
 /**
  * File list widget hook
  */
@@ -11,15 +13,30 @@ export function useFileList() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
-  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [limit, setLimit] = useState(10);
+
+  // Convert sort option to API parameters
+  const getSortParams = (sort: SortOption) => {
+    switch (sort) {
+      case 'newest':
+        return { orderBy: 'created_at', order: 'desc' as const };
+      case 'oldest':
+        return { orderBy: 'created_at', order: 'asc' as const };
+      case 'largest':
+        return { orderBy: 'size', order: 'desc' as const };
+      case 'smallest':
+        return { orderBy: 'size', order: 'asc' as const };
+    }
+  };
 
   const fetchFiles = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fileApi.list(page, limit, order);
+      const { orderBy, order } = getSortParams(sortBy);
+      const response = await fileApi.list(page, limit, order, orderBy);
       setFiles(response.files);
       setTotalItems(response.total);
       setTotalPages(Math.ceil(response.total / limit));
@@ -29,7 +46,7 @@ export function useFileList() {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, order]);
+  }, [page, limit, sortBy]);
 
   useEffect(() => {
     fetchFiles();
@@ -39,9 +56,9 @@ export function useFileList() {
     fetchFiles();
   };
 
-  const toggleOrder = () => {
-    setOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    setPage(1); // Reset to first page when changing sort order
+  const handleSortChange = (newSort: SortOption) => {
+    setSortBy(newSort);
+    setPage(1); // Reset to first page when changing sort
   };
 
   const handleLimitChange = (newLimit: number) => {
@@ -57,10 +74,10 @@ export function useFileList() {
     totalPages,
     totalItems,
     limit,
-    order,
+    sortBy,
     setPage,
     setLimit: handleLimitChange,
-    toggleOrder,
+    setSortBy: handleSortChange,
     refetch,
   };
 }
