@@ -38,7 +38,7 @@ export function useFileUpload(onSuccess?: () => void) {
       );
 
       onSuccess?.();
-    } catch (error) {
+    } catch {
       setUploads((prev) =>
         prev.map((u) =>
           u.fileName === file.name ? { ...u, status: 'error' } : u

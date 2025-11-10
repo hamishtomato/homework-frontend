@@ -19,8 +19,9 @@ export function useFileDelete(onSuccess?: () => void) {
     try {
       await fileApi.delete(id);
       onSuccess?.();
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to delete file');
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || 'Failed to delete file');
     } finally {
       setLoading(false);
     }

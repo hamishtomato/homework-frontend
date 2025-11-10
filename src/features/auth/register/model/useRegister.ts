@@ -19,8 +19,9 @@ export function useRegister() {
       const { access_token } = await userApi.signup({ email, password });
       storage.setToken(access_token);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Registration failed');
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || 'Registration failed');
       throw err;
     } finally {
       setLoading(false);

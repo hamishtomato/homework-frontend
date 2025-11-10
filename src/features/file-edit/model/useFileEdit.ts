@@ -20,8 +20,9 @@ export function useFileEdit(onSuccess?: () => void) {
     try {
       await fileApi.update(id, { filename: newFilename });
       onSuccess?.();
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to update file');
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || 'Failed to update file');
       throw err;
     } finally {
       setLoading(false);

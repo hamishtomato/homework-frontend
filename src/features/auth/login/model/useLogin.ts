@@ -19,8 +19,9 @@ export function useLogin() {
       const { access_token } = await userApi.login({ email, password });
       storage.setToken(access_token);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Login failed');
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || 'Login failed');
       throw err;
     } finally {
       setLoading(false);

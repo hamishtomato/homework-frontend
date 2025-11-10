@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { fileApi, type FileMetadata } from '@/entities/file';
 
 /**
@@ -13,7 +13,7 @@ export function useFileList() {
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const limit = 10;
 
-  const fetchFiles = async () => {
+  const fetchFiles = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -21,16 +21,17 @@ export function useFileList() {
       const response = await fileApi.list(page, limit, order);
       setFiles(response.files);
       setTotalPages(Math.ceil(response.total / limit));
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to load files');
+    } catch (err) {
+      const error = err as { response?: { data?: { detail?: string } } };
+      setError(error.response?.data?.detail || 'Failed to load files');
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, order]);
 
   useEffect(() => {
     fetchFiles();
-  }, [page, order]);
+  }, [fetchFiles]);
 
   const refetch = () => {
     fetchFiles();
