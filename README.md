@@ -236,6 +236,7 @@ npm run build
 - [ ] Bulk operations (multi-delete, multi-download)
 - [ ] Toast notifications for actions
 - [ ] Dark mode support
+- [ ] Pagination: add page selection (jump-to-page) control
 
 ### Long-term
 
