@@ -49,6 +49,10 @@ export function useFileUpload(onSuccess?: () => void) {
 
   const clearUploads = () => setUploads([]);
 
-  return { uploadFile, uploads, clearUploads };
+  const removeUpload = (fileName: string) => {
+    setUploads((prev) => prev.filter((u) => u.fileName !== fileName));
+  };
+
+  return { uploadFile, uploads, clearUploads, removeUpload };
 }
 
