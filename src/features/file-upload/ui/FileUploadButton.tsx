@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from 'react';
+import { useRef, type ChangeEvent } from 'react';
 import { useFileUpload } from '../model/useFileUpload';
 
 interface FileUploadButtonProps {
@@ -8,14 +8,9 @@ interface FileUploadButtonProps {
 export function FileUploadButton({ onUploadSuccess }: FileUploadButtonProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadFile, uploads, removeUpload } = useFileUpload(onUploadSuccess);
-  const [hasSelectedFiles, setHasSelectedFiles] = useState(false);
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-
-    if (files.length > 0) {
-      setHasSelectedFiles(true);
-    }
 
     for (const file of files) {
       await uploadFile(file);
@@ -24,14 +19,6 @@ export function FileUploadButton({ onUploadSuccess }: FileUploadButtonProps) {
     // Clear input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
-    }
-  };
-
-  const handleRemoveUpload = (fileName: string) => {
-    removeUpload(fileName);
-    // If no uploads left, reset the file selection state
-    if (uploads.length === 1) {
-      setHasSelectedFiles(false);
     }
   };
 
@@ -54,10 +41,6 @@ export function FileUploadButton({ onUploadSuccess }: FileUploadButtonProps) {
               file:cursor-pointer"
           />
         </label>
-        {/* Show "No files selected" message */}
-        {!hasSelectedFiles && uploads.length === 0 && (
-          <p className="text-sm text-gray-500 mt-2">未選擇任何檔案</p>
-        )}
       </div>
 
       {/* Upload progress */}
@@ -74,13 +57,13 @@ export function FileUploadButton({ onUploadSuccess }: FileUploadButtonProps) {
                   {/* Show close button only for completed uploads */}
                   {(upload.status === 'success' || upload.status === 'error') && (
                     <button
-                      onClick={() => handleRemoveUpload(upload.fileName)}
-                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                      onClick={() => removeUpload(upload.fileName)}
+                      className="flex items-center justify-center w-6 h-6 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-all"
                       title="Remove"
                       aria-label={`Remove ${upload.fileName}`}
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
                   )}

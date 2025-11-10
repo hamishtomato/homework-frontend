@@ -27,30 +27,6 @@ describe('FileUploadButton', () => {
     expect(fileInput).toHaveAttribute('multiple')
   })
 
-  it('should show "未選擇任何檔案" message by default', () => {
-    render(<FileUploadButton onUploadSuccess={mockOnUploadSuccess} />)
-
-    expect(screen.getByText('未選擇任何檔案')).toBeInTheDocument()
-  })
-
-  it('should hide "未選擇任何檔案" message after selecting files', async () => {
-    const user = userEvent.setup()
-    vi.mocked(fileApi.upload).mockResolvedValue({ id: 1 })
-
-    render(<FileUploadButton onUploadSuccess={mockOnUploadSuccess} />)
-
-    expect(screen.getByText('未選擇任何檔案')).toBeInTheDocument()
-
-    const fileInput = screen.getByLabelText(/choose files/i)
-    const file = new File(['test content'], 'test.jpg', { type: 'image/jpeg' })
-
-    await user.upload(fileInput, file)
-
-    await waitFor(() => {
-      expect(screen.queryByText('未選擇任何檔案')).not.toBeInTheDocument()
-    })
-  })
-
   it('should display upload progress for selected file', async () => {
     const user = userEvent.setup()
     let progressCallback: ((progress: number) => void) | undefined
@@ -167,33 +143,6 @@ describe('FileUploadButton', () => {
 
     await waitFor(() => {
       expect(screen.queryByText('test.jpg')).not.toBeInTheDocument()
-    })
-  })
-
-  it('should show "未選擇任何檔案" again after removing last upload', async () => {
-    const user = userEvent.setup()
-
-    vi.mocked(fileApi.upload).mockImplementation(async (_file, onProgress) => {
-      onProgress?.(100)
-      return { id: 1 }
-    })
-
-    render(<FileUploadButton onUploadSuccess={mockOnUploadSuccess} />)
-
-    const fileInput = screen.getByLabelText(/choose files/i)
-    const file = new File(['test content'], 'test.jpg', { type: 'image/jpeg' })
-
-    await user.upload(fileInput, file)
-
-    await waitFor(() => {
-      expect(screen.queryByText('未選擇任何檔案')).not.toBeInTheDocument()
-    })
-
-    const closeButton = screen.getByLabelText(/remove test\.jpg/i)
-    await user.click(closeButton)
-
-    await waitFor(() => {
-      expect(screen.getByText('未選擇任何檔案')).toBeInTheDocument()
     })
   })
 
